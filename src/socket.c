@@ -18,24 +18,6 @@
 #include <string.h>
 #include "socket.h"
 
-char* obtenerString(void* buffer,int bytes){
-	op_code codigo;
-	int offset=0;
-	memcpy(&codigo,buffer+offset,sizeof(op_code));
-	offset+=sizeof(op_code);
-
-	int size;
-
-	memcpy(&size,buffer+offset,sizeof(int));
-	offset+=sizeof(int);
-
-	void* stream=malloc(size);
-	memcpy(stream,buffer+offset,size);
-
-	return (char*)stream;
-
-
-}
 int main(void) {
 	struct sockaddr_in direccionServidor;
 	direccionServidor.sin_family=AF_INET;
@@ -81,4 +63,22 @@ int main(void) {
 	free(buffer);
 
 	return 0;
+}
+
+
+char* obtenerString(void* buffer,int bytes){
+	op_code codigo;
+	int offset=0;
+	memcpy(&codigo,buffer+offset,sizeof(op_code));
+	offset+=sizeof(op_code);
+
+	int size;
+
+	memcpy(&size,buffer+offset,sizeof(int));
+	offset+=sizeof(int);
+
+	void* stream=malloc(size);
+	memcpy(stream,buffer+offset,size);
+
+	return (char*)stream;
 }

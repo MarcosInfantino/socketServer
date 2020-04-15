@@ -25,6 +25,7 @@ typedef struct
 	t_buffer* buffer;
 } t_paquete;
 
+char* obtenerString(void* buffer,int bytes);
 
 
 #endif /* SOCKET_H_ */
