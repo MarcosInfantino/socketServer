@@ -16,7 +16,26 @@
 #include <arpa/inet.h>
 #include <stdlib.h>
 #include <string.h>
+#include "socket.h"
 
+char* obtenerString(void* buffer,int bytes){
+	op_code codigo;
+	int offset=0;
+	memcpy(&codigo,buffer+offset,sizeof(op_code));
+	offset+=sizeof(op_code);
+
+	int size;
+
+	memcpy(&size,buffer+offset,sizeof(int));
+	offset+=sizeof(int);
+
+	void* stream=malloc(size);
+	memcpy(stream,buffer+offset,size);
+
+	return (char*)stream;
+
+
+}
 int main(void) {
 	struct sockaddr_in direccionServidor;
 	direccionServidor.sin_family=AF_INET;
@@ -41,10 +60,9 @@ int main(void) {
 	int cliente = accept(servidor, (void*) &direccionCliente, &tamanioDireccion);
 
 	printf("Se ha recibido una conexión en %d.\n", cliente);
-	send(cliente, "Hola!",6,0);
 
 
-	char*buffer=malloc(100);
+	void *buffer=malloc(100);
 
 	while(1){
 		int bytesRecibidos = recv(cliente,buffer, 99,0);
@@ -53,9 +71,11 @@ int main(void) {
 			perror("Error");
 			return 1;
 		}
+		char* cadena=obtenerString(buffer,bytesRecibidos);
 
-		buffer[bytesRecibidos]='\0';
-		printf("Me llegaron %d bytes con %s\n", bytesRecibidos,buffer);
+
+		printf("Me llegaron %d bytes con %s\n", bytesRecibidos-1,cadena);
+		//usamos bytesRecibidos-1, pues el fgets agrega un /0 de mas al que ya agregamos en nuestra implementacion
 	}
 
 	free(buffer);
